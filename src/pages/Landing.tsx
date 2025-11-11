@@ -1,12 +1,15 @@
+import AiIntro from '../components/AiIntro';
 import GalleryCarousel from '../components/GalleryCarousel';
 import HeroSection from '../components/HeroSection';
 import HowItWorks from '../components/HowItWorks';
+import QuotesSection from '../components/QuotesSection';
 
 export default function Landing() {
   return (
     <div className="flex flex-col items-center">
       {/* 🌟 Hero Section */}
       <HeroSection />
+      <AiIntro />
       {/* 💡 Feature Highlights */}
       <section className="py-20 bg-white w-full">
         <div className="max-w-6xl mx-auto px-6 text-center">
@@ -46,6 +49,7 @@ export default function Landing() {
       </section>
       {/* 🖼️ Visual Gallery */}
       <GalleryCarousel /> {/* new carousel */}
+      <QuotesSection />
       <HowItWorks />
       {/* 🚀 CTA */}
       <section className="py-20 mt-20 bg-white text-center w-full">

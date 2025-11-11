@@ -1,16 +1,16 @@
-import { Link } from 'react-router-dom'
-import { useThemeStore } from '../store/useThemeStore'
-import { Sun, Moon } from 'lucide-react'
+import { Link } from 'react-router-dom';
+import { useThemeStore } from '../store/useThemeStore';
+import { Sun, Moon } from 'lucide-react';
 
 export default function Navbar() {
-  const { theme, toggleTheme } = useThemeStore()
+  const { theme, toggleTheme } = useThemeStore();
 
   return (
     <nav
-      className={`flex justify-between items-center px-8 py-4 sticky top-0 z-50 transition-all duration-500 ${
+      className={`flex justify-between items-center px-8 py-4 sticky top-0 z-50 transition-all duration-700 backdrop-blur-xl ${
         theme === 'ai'
-          ? 'bg-slate-900/80 backdrop-blur-xl border-b border-white/10 text-white'
-          : 'bg-white/80 backdrop-blur-md shadow-sm text-gray-800'
+          ? 'bg-slate-950/80 border-b border-white/10 text-white'
+          : 'bg-white/80 border-b border-gray-200 text-gray-800'
       }`}
     >
       <h1
@@ -22,55 +22,31 @@ export default function Navbar() {
       </h1>
 
       <div className="flex items-center space-x-6">
-        <Link
-          to="/"
-          className={`transition ${
-            theme === 'ai'
-              ? 'hover:text-orange-400 text-gray-200'
-              : 'hover:text-orange-500 text-gray-700'
-          }`}
-        >
-          Landing
-        </Link>
-        <Link
-          to="/home"
-          className={`transition ${
-            theme === 'ai'
-              ? 'hover:text-orange-400 text-gray-200'
-              : 'hover:text-orange-500 text-gray-700'
-          }`}
-        >
-          Home
-        </Link>
-        <Link
-          to="/explore"
-          className={`transition ${
-            theme === 'ai'
-              ? 'hover:text-orange-400 text-gray-200'
-              : 'hover:text-orange-500 text-gray-700'
-          }`}
-        >
-          Explore
-        </Link>
-        <Link
-          to="/about"
-          className={`transition ${
-            theme === 'ai'
-              ? 'hover:text-orange-400 text-gray-200'
-              : 'hover:text-orange-500 text-gray-700'
-          }`}
-        >
-          About
-        </Link>
+        {['Landing', 'Home', 'Explore', 'About'].map((page) => (
+          <Link
+            key={page}
+            to={`/${page.toLowerCase() === 'landing' ? '' : page.toLowerCase()}`}
+            className={`transition font-medium ${
+              theme === 'ai'
+                ? 'hover:text-orange-400 text-gray-200'
+                : 'hover:text-orange-500 text-gray-700'
+            }`}
+          >
+            {page}
+          </Link>
+        ))}
 
-        {/* 🌙 Theme Toggle */}
         <button
           onClick={toggleTheme}
           className="p-2 rounded-full border border-transparent hover:border-orange-400 transition"
         >
-          {theme === 'ai' ? <Sun className="text-yellow-300" /> : <Moon className="text-slate-800" />}
+          {theme === 'ai' ? (
+            <Sun className="text-yellow-300" />
+          ) : (
+            <Moon className="text-slate-800" />
+          )}
         </button>
       </div>
     </nav>
-  )
+  );
 }

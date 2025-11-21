@@ -14,11 +14,13 @@ export default function Navbar() {
       }`}
     >
       <h1
-        className={`text-3xl font-bold tracking-tight ${
+        className={`flex items-center gap-2 text-3xl font-bold tracking-tight ${
           theme === 'ai' ? 'text-orange-400' : 'text-orange-600'
         }`}
       >
-        StepChef<span className={theme === 'ai' ? 'text-lime-300' : 'text-green-500'}>AI</span>
+        <img src="/icon.svg" alt="logo" className="w-8 h-8 object-contain" />
+        StepChef
+        <span className={theme === 'ai' ? 'text-lime-300' : 'text-green-500'}>AI</span>
       </h1>
 
       <div className="flex items-center space-x-6">

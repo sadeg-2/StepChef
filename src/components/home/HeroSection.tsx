@@ -8,8 +8,7 @@ export default function HeroSection() {
   const { theme } = useThemeStore();
 
   // Meal from API
-  const { data, isLoading, refetch } = useRandomMeal();
-  const meal = data?.meals?.[0];
+  const { data:meal, isLoading, refetch } = useRandomMeal();
 
   if (isLoading || !meal) return null;
 

@@ -8,7 +8,7 @@ import type { Meal } from "./meal";
 
 
 export interface MealResponse {
-  meals: Meal[] | null;
+  meals: Meal[];
 }
 
 export interface FilterResponse {

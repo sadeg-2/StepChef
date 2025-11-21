@@ -65,15 +65,25 @@ export default function ExplorePage() {
 
   // Areas
   const filteredAreas = useMemo(() => {
-    return areaData?.meals?.filter((a) => a.strArea.toLowerCase().includes(searchLower)) ?? [];
+    return (
+      areaData?.meals?.filter((a) => {
+        if ('strArea' in a && a.strArea) {
+          return a.strArea.toLowerCase().includes(searchLower);
+        }
+        return false;
+      }) ?? []
+    );
   }, [areaData, searchLower]);
 
   // Ingredients
   const filteredIngredients = useMemo(() => {
     return (
-      ingredientsData?.meals?.filter((ing) =>
-        ing.strIngredient.toLowerCase().includes(searchLower)
-      ) ?? []
+      ingredientsData?.meals?.filter((ing) => {
+        if ('strIngredient' in ing && ing.strIngredient) {
+          return ing.strIngredient.toLowerCase().includes(searchLower);
+        }
+        return false;
+      }) ?? []
     );
   }, [ingredientsData, searchLower]);
 
@@ -197,27 +207,28 @@ export default function ExplorePage() {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-20">
             {filteredAreas.map((a, i) => {
-              const code = AREA_FLAGS[a.strArea];
-              const flag = code ? `https://flagcdn.com/w40/${code}.png` : null;
-
-              return (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.03 }}
-                  onClick={() => navigate(`/area/${a.strArea}`)}
-                  className={`p-4 rounded-xl text-center font-semibold cursor-pointer shadow-md border flex flex-col items-center gap-3
+              if ('strArea' in a && a.strArea) {
+                const code = AREA_FLAGS[a.strArea];
+                const flag = code ? `https://flagcdn.com/w40/${code}.png` : null;
+                return (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.03 }}
+                    onClick={() => navigate(`/area/${a.strArea}`)}
+                    className={`p-4 rounded-xl text-center font-semibold cursor-pointer shadow-md border flex flex-col items-center gap-3
                   ${
                     theme === 'ai'
                       ? 'bg-white/5 border-white/10 backdrop-blur-xl'
                       : 'bg-white border-gray-200'
                   }`}
-                >
-                  {flag && <img src={flag} className="w-8 h-6 rounded shadow" alt={a.strArea} />}
-                  <span>{a.strArea}</span>
-                </motion.div>
-              );
+                  >
+                    {flag && <img src={flag} className="w-8 h-6 rounded shadow" alt={a.strArea} />}
+                    <span>{a.strArea}</span>
+                  </motion.div>
+                );
+              }
             })}
           </div>
         )}
@@ -242,26 +253,28 @@ export default function ExplorePage() {
             {/* GRID */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
               {paginatedIngredients.map((ing, i) => {
-                const img = `https://www.themealdb.com/images/ingredients/${ing.strIngredient}.png`;
+                if ('strIngredient' in ing && ing.strIngredient) {
+                  const img = `https://www.themealdb.com/images/ingredients/${ing.strIngredient}.png`;
 
-                return (
-                  <motion.div
-                    key={ing.idIngredient}
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.02 }}
-                    onClick={() => navigate(`/ingredient/${ing.strIngredient}`)}
-                    className={`p-4 rounded-xl shadow-lg border cursor-pointer flex flex-col items-center gap-3
+                  return (
+                    <motion.div
+                      key={ing.idIngredient}
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.02 }}
+                      onClick={() => navigate(`/ingredient/${ing.strIngredient}`)}
+                      className={`p-4 rounded-xl shadow-lg border cursor-pointer flex flex-col items-center gap-3
                     ${
                       theme === 'ai'
                         ? 'bg-white/5 border-white/10 backdrop-blur-xl'
                         : 'bg-white border-gray-200'
                     }`}
-                  >
-                    <img src={img} className="w-14 h-14 object-contain drop-shadow-lg" />
-                    <p className="font-semibold text-center">{ing.strIngredient}</p>
-                  </motion.div>
-                );
+                    >
+                      <img src={img} className="w-14 h-14 object-contain drop-shadow-lg" />
+                      <p className="font-semibold text-center">{ing.strIngredient}</p>
+                    </motion.div>
+                  );
+                }
               })}
             </div>
 

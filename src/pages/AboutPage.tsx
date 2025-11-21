@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useThemeStore } from '../store/useThemeStore';
 import myPhoto from '../assets/me.jpg';
+import emailjs from '@emailjs/browser';
+import toast from 'react-hot-toast';
 
 export default function AboutPage() {
   const { theme } = useThemeStore();
@@ -15,6 +17,44 @@ export default function AboutPage() {
   });
 
   const isAI = theme === 'ai';
+
+  // ==========================
+  // SEND EMAIL
+  // ==========================
+  const sendEmail = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!form.name || !form.email || !form.message) {
+      toast.error('Please fill all fields');
+      return;
+    }
+
+    if (rating === 0) {
+      toast.error('Please select a rating');
+      return;
+    }
+
+    const templateParams = {
+      name: form.name,
+      email: form.email,
+      message: form.message,
+      rating: rating,
+      time: new Date().toLocaleString(),
+      title: 'Contact Form Submission',
+    };
+
+    emailjs
+      .send('service_0mxgn51', 'template_xqdjbkr', templateParams, 'EkKfxLjRrpt7xq1ja')
+      .then(() => {
+        toast.success('Message sent successfully!');
+        setForm({ name: '', email: '', message: '' });
+        setRating(0);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error('Failed to send message');
+      });
+  };
 
   return (
     <main
@@ -74,10 +114,7 @@ export default function AboutPage() {
               title: 'Browse By Area',
               desc: 'Discover meals from around the world with flag indicators.',
             },
-            {
-              title: 'Smart Search',
-              desc: 'Find what you want instantly across all categories.',
-            },
+            { title: 'Smart Search', desc: 'Find what you want instantly across all categories.' },
             {
               title: 'Fast & Modern UI',
               desc: 'Smooth animations, responsive design, clean layout.',
@@ -112,22 +149,15 @@ export default function AboutPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className={`p-8 rounded-2xl shadow-xl max-w-4xl mx-auto mb-20 flex flex-col lg:flex-row items-center gap-10
-    ${
-      isAI
-        ? 'bg-white/5 border border-white/10 backdrop-blur-xl'
-        : 'bg-white border border-gray-200'
-    }`}
+          ${
+            isAI ? 'bg-white/5 border border-white/10 backdrop-blur-xl' : 'bg-white border-gray-200'
+          }
+        `}
         >
-          {/* Developer Image */}
           <div className="w-40 h-40 rounded-full overflow-hidden shadow-lg border border-white/20">
-            <img
-              src={myPhoto} // 👉 Replace with your real image path
-              alt="Developer"
-              className="w-full h-full object-cover"
-            />
+            <img src={myPhoto} alt="Developer" className="w-full h-full object-cover" />
           </div>
 
-          {/* Content */}
           <div className="flex-1">
             <h3 className="text-3xl font-bold mb-2">
               Sadeg <span className="opacity-80">(Developer)</span>
@@ -135,12 +165,9 @@ export default function AboutPage() {
 
             <p className={`text-lg leading-7 mb-4 ${isAI ? 'text-gray-300' : 'text-gray-700'}`}>
               I'm a passionate full-stack developer who loves crafting modern, fast, and visually
-              stunning applications. I created StepChef to showcase my ability to blend beautiful UI
-              with smooth UX and clean React architecture — all backed by TypeScript, animations,
-              and APIs.
+              stunning applications…
             </p>
 
-            {/* Skills */}
             <h4 className={`font-semibold mb-2 ${isAI ? 'text-lime-300' : 'text-orange-600'}`}>
               Skills & Technologies
             </h4>
@@ -158,7 +185,6 @@ export default function AboutPage() {
               <li>• Next.js / Prisma</li>
             </ul>
 
-            {/* Social Links */}
             <div className="flex gap-4 mt-4">
               <a
                 href="https://github.com/sadeg-2"
@@ -199,45 +225,14 @@ export default function AboutPage() {
         </motion.div>
 
         {/* ============================== */}
-        {/* RATING */}
-        {/* ============================== */}
-        <h2 className={`text-3xl font-bold mb-6 ${isAI ? 'text-lime-300' : 'text-orange-600'}`}>
-          Rate Your Experience
-        </h2>
-
-        <div className="flex justify-center mb-12 gap-2 text-4xl">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <motion.span
-              key={star}
-              whileHover={{ scale: 1.3 }}
-              onMouseEnter={() => setHoverRating(star)}
-              onMouseLeave={() => setHoverRating(0)}
-              onClick={() => setRating(star)}
-              className={`cursor-pointer ${
-                star <= (hoverRating || rating)
-                  ? isAI
-                    ? 'text-lime-400'
-                    : 'text-orange-500'
-                  : 'text-gray-400'
-              }`}
-            >
-              ★
-            </motion.span>
-          ))}
-        </div>
-
-        {/* ============================== */}
-        {/* CONTACT FORM */}
+        {/* CONTACT FORM WITH RATING INSIDE */}
         {/* ============================== */}
         <h2 className={`text-3xl font-bold mb-6 ${isAI ? 'text-lime-300' : 'text-orange-600'}`}>
           Contact Me
         </h2>
 
         <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            alert('Message sent! (backend not implemented)');
-          }}
+          onSubmit={sendEmail}
           className={`p-6 rounded-xl shadow-xl max-w-3xl mx-auto space-y-4 ${
             isAI ? 'bg-white/5 border border-white/10 backdrop-blur-xl' : 'bg-white border-gray-200'
           }`}
@@ -246,6 +241,7 @@ export default function AboutPage() {
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
             placeholder="Your name"
+            required
             className={`w-full p-3 rounded-xl border ${
               isAI ? 'bg-white/10 border-white/20 text-white' : 'bg-white border-gray-300'
             }`}
@@ -255,6 +251,7 @@ export default function AboutPage() {
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
             placeholder="Your email"
+            required
             className={`w-full p-3 rounded-xl border ${
               isAI ? 'bg-white/10 border-white/20 text-white' : 'bg-white border-gray-300'
             }`}
@@ -265,10 +262,37 @@ export default function AboutPage() {
             value={form.message}
             onChange={(e) => setForm({ ...form, message: e.target.value })}
             placeholder="Your message..."
+            required
             className={`w-full p-3 rounded-xl border ${
               isAI ? 'bg-white/10 border-white/20 text-white' : 'bg-white border-gray-300'
             }`}
           />
+
+          {/* ⭐ RATING INSIDE FORM ⭐ */}
+          <div className="text-center">
+            <h3 className="text-xl font-semibold mb-2">Rate Your Experience</h3>
+
+            <div className="flex justify-center gap-2 text-4xl">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <motion.span
+                  key={star}
+                  whileHover={{ scale: 1.3 }}
+                  onMouseEnter={() => setHoverRating(star)}
+                  onMouseLeave={() => setHoverRating(0)}
+                  onClick={() => setRating(star)}
+                  className={`cursor-pointer ${
+                    star <= (hoverRating || rating)
+                      ? isAI
+                        ? 'text-lime-400'
+                        : 'text-orange-500'
+                      : 'text-gray-400'
+                  }`}
+                >
+                  ★
+                </motion.span>
+              ))}
+            </div>
+          </div>
 
           <button
             className={`w-full py-3 rounded-xl font-bold text-lg transition-all ${

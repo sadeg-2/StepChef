@@ -13,16 +13,17 @@ export default function RecipePage() {
   const steps = data?.steps ?? [];
 
   // Hook must run before any return
-  const { currentStep, nextStep, prevStep, restart } = useCookingProgress(
-    id || '',
-    steps.length
-  );
+  const { currentStep, nextStep, prevStep, restart } = useCookingProgress(id || '', steps.length);
 
   if (isLoading || !meal)
     return <p className="px-6 py-20 text-center text-lg animate-pulse">Loading recipe...</p>;
 
   // Ingredients
-  const ingredients: { ingredient: string; measure: string }[] = [];
+  const ingredients: {
+    ingredient: string | null;
+    measure: string | null;
+  }[] = [];
+
   for (let i = 1; i <= 20; i++) {
     const ing = meal[`strIngredient${i}`];
     const measure = meal[`strMeasure${i}`];
@@ -104,24 +105,30 @@ export default function RecipePage() {
         </h2>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-16">
-          {ingredients.map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.03 }}
-              className={`p-5 rounded-2xl shadow-xl border ${
-                theme === 'ai'
-                  ? 'bg-white/5 border-white/10 backdrop-blur-xl'
-                  : 'bg-white border-gray-200'
-              }`}
-            >
-              <h3 className="font-bold text-lg">{item.ingredient}</h3>
-              <p className={`mt-1 ${theme === 'ai' ? 'text-gray-300' : 'text-gray-600'}`}>
-                {item.measure}
-              </p>
-            </motion.div>
-          ))}
+          {ingredients.map((item, i) => {
+            const img = `https://www.themealdb.com/images/ingredients/${item.ingredient}.png`;
+
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.03 }}
+                className={`p-5 rounded-2xl shadow-xl border ${
+                  theme === 'ai'
+                    ? 'bg-white/5 border-white/10 backdrop-blur-xl'
+                    : 'bg-white border-gray-200'
+                }`}
+              >
+                <h3 className="font-bold text-lg">{item.ingredient}</h3>
+                <img src={img} className="w-14 h-14 object-contain drop-shadow-lg" />
+
+                <p className={`mt-1 ${theme === 'ai' ? 'text-gray-300' : 'text-gray-600'}`}>
+                  {item.measure}
+                </p>
+              </motion.div>
+            );
+          })}
         </div>
 
         {/* =================================================

@@ -20,7 +20,10 @@ import {
 export function useRandomMeal() {
   return useQuery({
     queryKey: ['randomMeal'],
-    queryFn: getRandomMeal,
+    queryFn: async () => {
+      const meals = await getRandomMeal(); // still array
+      return meals.meals[0]; // return single item
+    },
   });
 }
 
